@@ -1,0 +1,6 @@
+{
+    "sampling_rate": 5,
+    "suspicious_threshold": 0.5,
+    "face_min_size": 40,
+    "max_upload_size_mb": 100
+}
