@@ -293,7 +293,7 @@ export default function Dashboard() {
                     completedJob.prediction === 'FAKE' ? 'text-brand-danger neon-glow-danger' : 'text-brand-success neon-glow-success'
                   }`}
                 >
-                  {completedJob.prediction === 'REAL' ? 'REAL (Not AI)' : 'FAKE'}
+                  {completedJob.prediction === 'REAL' ? 'Not AI' : 'AI Generated'}
                 </span>
               </div>
 

@@ -137,7 +137,7 @@ export default function SettingsPage() {
               <div className="space-y-1">
                 <span className="text-sm font-semibold text-slate-200">Suspicious Cutoff</span>
                 <p className="text-xs text-slate-500 max-w-md">
-                  Scores above this threshold trigger the <b>FAKE</b> label and generate Grad-CAM heatmaps.
+                  Scores above this threshold trigger the <b>AI Generated</b> label and generate Grad-CAM heatmaps.
                 </p>
               </div>
               <div className="w-16 text-right">

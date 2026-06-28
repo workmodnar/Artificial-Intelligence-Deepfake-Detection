@@ -143,7 +143,7 @@ export default function HistoryPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       {job.status === 'COMPLETED' ? (
                         <span className={`font-bold ${job.prediction === 'FAKE' ? 'text-brand-danger' : 'text-brand-success'}`}>
-                          {job.prediction === 'REAL' ? 'REAL (Not AI)' : 'FAKE'} ({job.confidence ? (job.confidence * 100).toFixed(0) : 0}%)
+                          {job.prediction === 'REAL' ? 'Not AI' : 'AI Generated'} ({job.confidence ? (job.confidence * 100).toFixed(0) : 0}%)
                         </span>
                       ) : (
                         <span className="text-slate-500">—</span>

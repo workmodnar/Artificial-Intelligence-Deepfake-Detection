@@ -184,7 +184,15 @@ class AnalysisService:
             max_fake_prob = np.max([f["prob_fake"] for f in frames_with_faces])
             
             overall_prediction = "FAKE" if avg_fake_prob >= suspicious_threshold else "REAL"
-            overall_confidence = avg_fake_prob if overall_prediction == "FAKE" else (1.0 - avg_fake_prob)
+            
+            if overall_prediction == "FAKE":
+                # Confidence in AI Generated verdict is the average of fake probability of all suspicious frames
+                suspicious_scores = [f["prob_fake"] for f in frames_with_faces if f["prob_fake"] >= suspicious_threshold]
+                overall_confidence = np.mean(suspicious_scores) if suspicious_scores else avg_fake_prob
+            else:
+                # Confidence in Not AI verdict is the average of authentic probability of all non-suspicious frames
+                authentic_scores = [(1.0 - f["prob_fake"]) for f in frames_with_faces if f["prob_fake"] < suspicious_threshold]
+                overall_confidence = np.mean(authentic_scores) if authentic_scores else (1.0 - avg_fake_prob)
             
             percentage_suspicious = (suspicious_frames_count / len(frames_with_faces)) * 100
 
@@ -250,6 +258,18 @@ class AnalysisService:
             job.error_message = str(e)
             db.commit()
         finally:
+            # 7. Explicitly release memory resources (very important for shared CPU/GPU hosts)
+            if 'pipeline' in locals():
+                try:
+                    del pipeline
+                except Exception:
+                    pass
+            try:
+                import torch
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+            except Exception:
+                pass
             db.close()
 
     @staticmethod

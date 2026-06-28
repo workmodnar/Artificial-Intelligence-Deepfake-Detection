@@ -42,6 +42,11 @@ def delete_history_item(job_id: str, db: Session = Depends(get_db)):
             detail="Job not found."
         )
 
+    # Extract paths to local variables before deleting/committing DB record
+    # (otherwise job attributes expire and raise ObjectDeletedError)
+    video_path = job.video_path
+    report_path = job.report_path
+
     # 1. Delete DB record
     db.delete(job)
     db.commit()
@@ -50,11 +55,11 @@ def delete_history_item(job_id: str, db: Session = Depends(get_db)):
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
     
     # Delete uploaded video
-    if job.video_path and os.path.exists(job.video_path):
+    if video_path and os.path.exists(video_path):
         try:
-            os.remove(job.video_path)
+            os.remove(video_path)
         except Exception as e:
-            print(f"Error deleting video file {job.video_path}: {e}")
+            print(f"Error deleting video file {video_path}: {e}")
             
     # Delete frames directory
     frames_dir = os.path.join(base_dir, "frames", job_id)
@@ -73,8 +78,8 @@ def delete_history_item(job_id: str, db: Session = Depends(get_db)):
             print(f"Error deleting heatmaps folder {heatmaps_dir}: {e}")
 
     # Delete PDF report
-    if job.report_path:
-        report_abs_path = os.path.join(base_dir, job.report_path)
+    if report_path:
+        report_abs_path = os.path.join(base_dir, report_path)
         if os.path.exists(report_abs_path):
             try:
                 os.remove(report_abs_path)

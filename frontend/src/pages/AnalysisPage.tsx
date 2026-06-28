@@ -263,12 +263,24 @@ export default function AnalysisPage() {
                   <h3 className="font-bold text-sm text-slate-300">Confidence Trend Timeline</h3>
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={getTimelineChartData()}>
+                      <LineChart data={getTimelineChartData()} margin={{ top: 10, right: 25, left: -15, bottom: 15 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
-                        <XAxis dataKey="time" stroke="#64748b" fontSize={10} label={{ value: 'Time (seconds)', position: 'insideBottom', offset: -5, fill: '#64748b' }} />
-                        <YAxis stroke="#64748b" fontSize={10} domain={[0, 1]} />
-                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155' }} />
-                        <Line type="monotone" dataKey="probability" stroke="#6366f1" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 6 }} />
+                        <XAxis 
+                          dataKey="time" 
+                          stroke="#64748b" 
+                          fontSize={10} 
+                          tickLine={false}
+                          label={{ value: 'Time (s)', position: 'insideBottomRight', offset: -10, fill: '#64748b', fontSize: 10 }} 
+                        />
+                        <YAxis 
+                          stroke="#64748b" 
+                          fontSize={10} 
+                          tickLine={false}
+                          domain={[0, 1]} 
+                          tickFormatter={(v) => `${(v * 100).toFixed(0)}%`}
+                        />
+                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '12px' }} />
+                        <Line type="monotone" dataKey="probability" name="AI Probability" stroke="#6366f1" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 6 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
@@ -279,12 +291,12 @@ export default function AnalysisPage() {
                   <h3 className="font-bold text-sm text-slate-300">Anomaly Score Distribution</h3>
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={getDistributionChartData()}>
+                      <BarChart data={getDistributionChartData()} margin={{ top: 10, right: 15, left: -15, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
-                        <XAxis dataKey="range" stroke="#64748b" fontSize={9} />
-                        <YAxis stroke="#64748b" fontSize={10} />
-                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155' }} />
-                        <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                        <XAxis dataKey="range" stroke="#64748b" fontSize={9} tickLine={false} />
+                        <YAxis stroke="#64748b" fontSize={10} tickLine={false} />
+                        <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '12px' }} />
+                        <Bar dataKey="count" name="Frame Count" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -309,7 +321,7 @@ export default function AnalysisPage() {
                       />
                       <div className="flex justify-between items-center text-[10px]">
                         <span className="font-bold text-slate-300">F#{frame.frame_index}</span>
-                        <span className="text-brand-danger font-semibold">{(frame.prob_fake * 100).toFixed(0)}% Fake</span>
+                        <span className="text-brand-danger font-semibold">{(frame.prob_fake * 100).toFixed(0)}% AI</span>
                       </div>
                     </div>
                   ))}
@@ -338,7 +350,7 @@ export default function AnalysisPage() {
                     job.prediction === 'FAKE' ? 'text-brand-danger neon-glow-danger' : 'text-brand-success neon-glow-success'
                   }`}
                 >
-                  {job.prediction === 'REAL' ? 'REAL (Not AI)' : 'FAKE'}
+                  {job.prediction === 'REAL' ? 'Not AI' : 'AI Generated'}
                 </span>
                 <span className="text-sm font-semibold text-slate-400 mt-2">
                   {(job.confidence ? job.confidence * 100 : 0).toFixed(1)}% Confidence
@@ -348,11 +360,11 @@ export default function AnalysisPage() {
 
             <div className="space-y-3 text-xs border-t border-slate-800/40 pt-4">
               <div className="flex justify-between">
-                <span className="text-slate-500">Average Fake Logit Probability</span>
+                <span className="text-slate-500">Average AI Probability</span>
                 <span className="font-bold text-slate-300">{(job.results?.avg_fake_probability ? job.results.avg_fake_probability * 100 : 0).toFixed(1)}%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Maximum Single-Frame Score</span>
+                <span className="text-slate-500">Maximum Single-Frame AI Score</span>
                 <span className="font-bold text-slate-300">{(job.results?.max_fake_probability ? job.results.max_fake_probability * 100 : 0).toFixed(1)}%</span>
               </div>
               <div className="flex justify-between">

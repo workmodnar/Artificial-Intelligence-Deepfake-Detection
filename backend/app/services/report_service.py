@@ -4,6 +4,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from datetime import datetime
+import numpy as np
 
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -130,7 +131,8 @@ class ReportService:
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
         ]))
         
-        verdict_text = f"ANALYSIS VERDICT: {prediction}"
+        verdict_label = "AI Generated" if prediction == "FAKE" else "Not AI"
+        verdict_text = f"ANALYSIS VERDICT: {verdict_label}"
         verdict_confidence = f"Confidence: {confidence * 100:.1f}% ({'AI Splicing/Face-Swap' if prediction == 'FAKE' else 'Authentic Facial Movements'})"
         
         verdict_data = [
@@ -196,7 +198,7 @@ class ReportService:
                 
                 # Create visual block for this suspicious frame
                 frame_header = Paragraph(
-                    f"<b>Frame #{frame_idx}</b> (Timestamp: {timestamp:.2f}s) — <b>Deepfake Probability: {prob_fake * 100:.1f}%</b>",
+                    f"<b>Frame #{frame_idx}</b> (Timestamp: {timestamp:.2f}s) — <b>AI Probability: {prob_fake * 100:.1f}%</b>",
                     body_style
                 )
                 
@@ -249,6 +251,7 @@ class ReportService:
         1. Line chart of fake probability over frame timeline.
         2. Distribution histogram of frame-level predictions.
         """
+        import numpy as np
         frames = results.get("frames", [])
         if not frames:
             return
@@ -260,8 +263,8 @@ class ReportService:
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
         
         # 1. Timeline Confidence Trend
-        ax1.plot(frame_indices, prob_fake, color='#6366F1', linewidth=2, label='Deepfake Logit Probability')
-        ax1.axhline(y=0.5, color='#EF4444', linestyle='--', label='Suspicious Threshold')
+        ax1.plot(frame_indices, prob_fake, color='#6366F1', linewidth=2, label='AI Logit Probability')
+        ax1.axhline(y=0.5, color='#EF4444', linestyle='--', label='AI Detection Threshold')
         ax1.fill_between(frame_indices, prob_fake, 0.5, where=(np.array(prob_fake) >= 0.5), color='#EF4444', alpha=0.15)
         ax1.fill_between(frame_indices, prob_fake, 0.5, where=(np.array(prob_fake) < 0.5), color='#10B981', alpha=0.1)
         ax1.set_ylim(-0.05, 1.05)
@@ -292,5 +295,5 @@ class ReportService:
         ax2.grid(True, linestyle=':', alpha=0.6)
         
         plt.tight_layout()
-        plt.savefig(save_path, dpi=200)
+        plt.savefig(save_path, dpi=200, bbox_inches='tight')
         plt.close()

@@ -100,7 +100,7 @@ export default function ReportPage() {
               : 'bg-brand-success/10 border-brand-success/20 text-brand-success shadow-inner'
           }`}>
             <span className="text-xs text-slate-500 font-bold uppercase tracking-wider block">VERDICT</span>
-            <span className="text-2xl font-black">{job.prediction === 'REAL' ? 'REAL (Not AI)' : 'FAKE'}</span>
+            <span className="text-2xl font-black">{job.prediction === 'REAL' ? 'Not AI' : 'AI Generated'}</span>
           </div>
         </div>
 
@@ -135,7 +135,7 @@ export default function ReportPage() {
               <div className="flex justify-between text-sm py-2 border-b border-slate-900/60">
                 <span className="text-slate-500">Prediction Verdict:</span>
                 <span className={`font-bold ${job.prediction === 'FAKE' ? 'text-brand-danger' : 'text-brand-success'}`}>
-                  {job.prediction === 'REAL' ? 'REAL (Not AI)' : 'FAKE'} ({job.confidence ? (job.confidence * 100).toFixed(1) : 0}%)
+                  {job.prediction === 'REAL' ? 'Not AI' : 'AI Generated'} ({job.confidence ? (job.confidence * 100).toFixed(1) : 0}%)
                 </span>
               </div>
               <div className="flex justify-between text-sm py-2 border-b border-slate-900/60">
@@ -171,7 +171,7 @@ export default function ReportPage() {
                     <div className="flex-1 space-y-1">
                       <div className="flex justify-between text-xs">
                         <span className="font-bold text-slate-300">Frame #{frame.frame_index}</span>
-                        <span className="text-brand-danger font-semibold">{(frame.prob_fake * 100).toFixed(1)}% Fake</span>
+                        <span className="text-brand-danger font-semibold">{(frame.prob_fake * 100).toFixed(1)}% AI</span>
                       </div>
                       <p className="text-[11px] text-slate-400 leading-normal line-clamp-2">
                         {face.explanation}
